@@ -1,0 +1,7 @@
+- id: bump_testclient
+  name: bump_testclient
+  description: "Replace Starlette's TestClient from `requests` to `httpx`! 🎉"
+  entry: bump-testclient
+  language: python
+  types: [python]
+  require_serial: true

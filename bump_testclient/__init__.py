@@ -1,0 +1,1 @@
+from bump_testclient.command import BumpTestClientCommand
