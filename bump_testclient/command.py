@@ -14,7 +14,7 @@ class BumpTestClientCommand(VisitorBasedCodemodCommand):
 
     def __init__(self, context: CodemodContext) -> None:
         super().__init__(context)
-        self._assignments = {}
+        self._assignments = {}  # type: ignore[var-annotated]
 
     @m.call_if_inside(
         m.Call(
