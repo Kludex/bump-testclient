@@ -93,6 +93,25 @@ from bump_testclient.command import BumpTestClientCommand
             from starlette.testclient import TestClient
 
             def test(client: TestClient):
+                response = client.delete("/", json={{}})
+            """
+            ),
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                response = client.request("DELETE", "/", json={{}})
+            """
+            ),
+            id="no body delete replacement successful",
+        ),
+        pytest.param(
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
                 response = client.post("/", data='potato')
             """
             ),

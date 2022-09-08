@@ -46,9 +46,11 @@ class BumpTestClientCommand(VisitorBasedCodemodCommand):
     def replace_methods_by_request(
         self, original_node: cst.Call, updated_node: cst.Call
     ) -> cst.Call:
+        method_node = cst.ensure_type(updated_node.func, cst.Attribute).attr
+        method = cst.ensure_type(method_node, cst.Name).value.upper()
         return updated_node.with_changes(
             func=updated_node.func.with_changes(attr=cst.Name("request")),
-            args=[cst.Arg(value=cst.SimpleString('"GET"')), *updated_node.args],
+            args=[cst.Arg(value=cst.SimpleString(f'"{method}"')), *updated_node.args],
         )
 
     @m.call_if_inside(m.FunctionDef())
