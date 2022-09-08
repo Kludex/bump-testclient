@@ -143,7 +143,6 @@ from bump_testclient.command import BumpTestClientCommand
             """
             ),
             id="not replace data by content",
-            marks=pytest.mark.skip,
         ),
         pytest.param(
             textwrap.dedent(
@@ -186,7 +185,35 @@ from bump_testclient.command import BumpTestClientCommand
             """
             ),
             id="not replace data by content with variable",
-            marks=pytest.mark.skip,
+        ),
+        pytest.param(
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                data = b"potato"
+                response = client.post("/", data=data)
+
+            def test_another(client: TestClient):
+                data = {{}}
+                response = client.post("/", data=data)
+            """
+            ),
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                data = b"potato"
+                response = client.post("/", content=data)
+
+            def test_another(client: TestClient):
+                data = {{}}
+                response = client.post("/", data=data)
+            """
+            ),
+            id="two test functions",
         ),
     ),
 )
