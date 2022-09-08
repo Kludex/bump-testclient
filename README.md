@@ -19,6 +19,28 @@ It makes the changes needed to make the tests work again.
 
 Make your life easier. Suggested by [Sebastián Ramírez](https://twitter.com/tiangolo) as a joke, but well... I did it.
 
+## Transformations
+
+1. Replace `client.<method>(...)` by `client.request("<method>", ...)`
+
+The methods ("delete", "get", "head", "options") doesn't accept the `content`, `data`, `json` and `files` parameters.
+
+Conditions for this transformation:
+- Using `client.<method>` and `<method> in ("delete", "get", "head", "options").
+- Using `content`, `data`, `json` or `files` parameters.
+
+2. Replace `client.<method>(..., allow_redirects=...)` by `client.<method>(..., follow_redirects=...)`
+
+HTTPX uses `follow_redirects` instead of `allow_redirects`.
+
+3. Replace `client.<method>(..., data=...)` by `client.<method>(..., content=...)`
+
+If the argument passed to `data` is either text or bytes, `content` should be used instead.
+
+Conditions for this to happen:
+- `data` parameter receives a bytes/text argument.
+
+
 ## Installation
 
 ```bash
@@ -37,7 +59,7 @@ You can also use the pre-commit. Add the following to your `.pre-commit-config.y
 
 ```yaml
   - repo: https://github.com/Kludex/bump-testclient
-    rev: 0.0.0
+    rev: 0.1.0
     hooks:
       - id: bump_testclient
 ```
