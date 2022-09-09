@@ -234,6 +234,46 @@ from bump_testclient.command import BumpTestClientCommand
             ),
             id="two test functions",
         ),
+        pytest.param(
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                response = client.post("/", data=[("ha", 1), ("ha", 2), ("hi", 1)])
+            """
+            ),
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                response = client.post("/", data={"ha": [1, 2], "hi": 1})
+            """
+            ),
+            id="data field tuples",
+        ),
+        pytest.param(
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                data = [("ha", 1), ("ha", 2), ("hi", 1)]
+                response = client.post("/", data=data)
+            """
+            ),
+            textwrap.dedent(
+                """
+            from starlette.testclient import TestClient
+
+            def test(client: TestClient):
+                data = {"ha": [1, 2], "hi": 1}
+                response = client.post("/", data=data)
+            """
+            ),
+            id="data field tuples",
+        ),
     ),
 )
 def test_transformer(input: str, expected: str) -> None:

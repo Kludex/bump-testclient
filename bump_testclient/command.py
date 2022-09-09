@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import libcst as cst
 from libcst import matchers as m
 from libcst.codemod import CodemodContext, VisitorBasedCodemodCommand
@@ -64,7 +66,7 @@ class BumpTestClientCommand(VisitorBasedCodemodCommand):
         return updated_node
 
     @m.leave(m.FunctionDef())
-    def check_function_definition(
+    def reset_assignments_after_function(
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
         self._assignments = {}
@@ -92,4 +94,43 @@ class BumpTestClientCommand(VisitorBasedCodemodCommand):
                     args.append(arg.with_changes(keyword=cst.Name("content")))
                     continue
             args.append(arg)
+        return updated_node.with_changes(args=args)
+
+    @m.leave(
+        m.Call(
+            func=m.Attribute(
+                attr=m.OneOf(*[m.Name(method) for method in CLIENT_METHODS])
+            ),
+            args=[m.ZeroOrMore(), m.Arg(keyword=m.Name("data")), m.ZeroOrMore()],
+        )
+    )
+    def replace_data_payload(
+        self, original_node: cst.Call, updated_node: cst.Call
+    ) -> cst.Call:
+        args = []
+        data = defaultdict(list)
+        for arg in updated_node.args:
+            if m.matches(arg, m.Arg(keyword=m.Name("data"))):
+                if m.matches(
+                    arg.value,
+                    m.List(
+                        elements=[
+                            m.ZeroOrMore(),
+                            m.Element(value=m.Tuple()),
+                            m.ZeroOrMore(),
+                        ]
+                    ),
+                ):
+                    for element in cst.ensure_type(arg.value, cst.List).elements:
+                        element = cst.ensure_type(element, cst.Element)
+                        elements = cst.ensure_type(element.value, cst.Tuple).elements
+                        key_tuple, value_tuple = elements
+                        key = key_tuple.value.value
+                        value = value_tuple.value.value
+                        data[key].append(value)
+            if data:
+                args.append(arg)
+                continue
+            args.append(arg)
+
         return updated_node.with_changes(args=args)
