@@ -59,7 +59,7 @@ You can also use the pre-commit. Add the following to your `.pre-commit-config.y
 
 ```yaml
   - repo: https://github.com/Kludex/bump-testclient
-    rev: 0.2.0
+    rev: 0.3.0
     hooks:
       - id: bump_testclient
 ```
