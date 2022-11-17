@@ -26,7 +26,7 @@ Make your life easier. Suggested by [Sebastián Ramírez](https://twitter.com/ti
 The methods ("delete", "get", "head", "options") doesn't accept the `content`, `data`, `json` and `files` parameters.
 
 Conditions for this transformation:
-- Using `client.<method>` and `<method> in ("delete", "get", "head", "options").
+- Using `client.<method>` and `<method>` in ("delete", "get", "head", "options").
 - Using `content`, `data`, `json` or `files` parameters.
 
 2. Replace `client.<method>(..., allow_redirects=...)` by `client.<method>(..., follow_redirects=...)`
